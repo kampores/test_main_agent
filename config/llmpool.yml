@@ -1,0 +1,94 @@
+# 작성일: 2026-06-15
+# 설계자: 김유상
+# 설계자 소속: 경포씨엔씨
+# 설계자 이메일: bakkus@kpcnc.co.kr, bakkus@daum.net
+
+# 사용할 수 있는 모든 로컬 및 외부 LLM 프로필 정의 관리 풀
+llm_pool:
+  # OpenAI 기반 GPT-4o-mini 모델 정의
+  openai_gpt4o:
+    # LLM 제공 방식 (external: 외부 API 전용)
+    provider: external
+    # 외부 LLM API 활성화 여부
+    enabled: true
+    # 인증 키를 로드할 환경변수 이름
+    api_key_env: EXTERNAL_LLM_API_KEY
+    # API 요청을 전송할 베이스 엔드포인트 URL
+    base_url: https://api.openai.com/v1
+    # 채팅 완성 API 상세 경로
+    chat_completions_path: /chat/completions
+    # 호출할 외부 LLM 모델명
+    model: gpt-4o-mini
+    # 외부 API 호출 시 타임아웃 제한 시간(초)
+    timeout_seconds: 60
+    # 생성할 최대 토큰 수
+    max_tokens: 512
+    # 생성 다양성 템퍼러처 (결정론적 SQL 생성을 위해 0으로 설정)
+    temperature: 0
+
+  # Groq 호환 API를 사용하는 오픈소스 대형 언어 모델 정의 (개발망 및 폐쇄망 연동용)
+  groq_gpt_oss:
+    # LLM 제공 방식 (external: 외부 API 호환 전용)
+    provider: external
+    # 외부 LLM API 활성화 여부
+    enabled: true
+    # 인증 키를 로드할 환경변수 이름 (Groq API 키)
+    api_key_env: GROQ_API_KEY
+    # API 요청을 전송할 Groq 베이스 URL
+    base_url: https://api.groq.com/openai/v1
+    # 채팅 완성 API 상세 경로
+    chat_completions_path: /chat/completions
+    # 호출할 외부 오픈소스 LLM 모델명
+    model: openai/gpt-oss-120b
+    # API 호출 시 타임아웃 제한 시간(초)
+    timeout_seconds: 60
+    # 생성할 최대 토큰 수 (추론 모델의 생각 토큰을 고려하여 충분히 늘림)
+    max_tokens: 4096
+    # 생성 다양성 템퍼러처 (Groq API 가이드 스펙 적용)
+    temperature: 1
+
+  # Fabrix GPT-OSS 120B 외부 API 모델 정의 (kbonecloud GenAI 허브 전용)
+  fabrix_gpt_oss_120b:
+    # LLM 제공 방식 (external: 외부 API 전용)
+    provider: external
+    # 외부 LLM API 활성화 여부
+    enabled: true
+    # API 호출 형식 (fabrix_api: Fabrix 전용 형식, standard: OpenAI 호환 형식)
+    api_format: fabrix_api
+    # 인증 키를 로드할 환경변수 이름 (x-openapi-token)
+    api_key_env: X_OPENAPI_TOKEN
+    # Fabrix GenAI 허브 채팅 메시지 엔드포인트 URL
+    base_url: https://stg-fabrix-catalog-apim-trnn-genaihub.kbonecloud.com/prod/kb0/chat_connector/1/openapi/chat/v1/messages
+    # 호출할 LLM 식별자 (GPT-OSS-120B = 159)
+    llm_id: 159
+    # 인증 헤더용 환경변수 (x-generative-ai-client)
+    client_env: X_GENERATIVE_AI_CLIENT
+    # 인증 헤더용 환경변수 (x-client-user)
+    user_env: X_CLIENT_USER
+    # API 호출 시 타임아웃 제한 시간(초)
+    timeout_seconds: 120
+    # 생성할 최대 토큰 수
+    max_tokens: 4096
+    # 생성 다양성 템퍼러처 (Fabrix API 가이드 스펙 적용)
+    temperature: 1
+
+  # 로컬 CPU/GPU 추론용 Qwen 2.5 Coder 3B GGUF 모델 정의
+  local_qwen_3b:
+    # LLM 제공 방식 (local: 로컬 모델 전용)
+    provider: local
+    # 로컬 GGUF 형식 LLM 모델 파일의 상대 경로
+    model_path: llm_models/qwen2.5-coder-3b-instruct-q4_k_m.gguf
+    # 로컬 LLM의 컨텍스트 윈도우 크기
+    n_ctx: 4096
+    # CPU 추론 시 활용할 멀티스레드 개수
+    n_threads: 12
+    # 로컬 LLM 프롬프트 처리 배치 크기
+    n_batch: 512
+    # GPU로 오프로드(가속)할 모델 레이어 개수 (0은 CPU 전용 추론)
+    n_gpu_layers: 0
+    # 응답으로 생성할 최대 토큰 수
+    max_tokens: 512
+    # 생성 다양성 템퍼러처
+    temperature: 0
+    # 로컬 추론 엔진 상세 로그 출력 여부
+    verbose: false

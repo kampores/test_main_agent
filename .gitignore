@@ -1,0 +1,19 @@
+# 파이썬 가상환경 및 캐시 제외
+venv312/
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+
+# 설정 파일 내 민감 정보 및 로컬 환경설정 파일 제외
+.env
+.env.*
+
+# 로그 및 생성된 임시 SQL 파일 제외
+logs/
+generated_sql/
+*.log
+
+# IDE 설정 제외
+.vscode/
+.idea/

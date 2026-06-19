@@ -1,0 +1,46 @@
+# 중앙 라우팅 에이전트 설정 파일
+
+# FastAPI API 서비스 자체 설정
+agent_api:
+  title: "중앙 라우팅 에이전트 API"
+  version: "0.1.0"
+  description: "사용자 질문의 의도를 분석하여 SQL 생성 백엔드 또는 일반 대화 에이전트로 라우팅하는 서비스입니다."
+  host: "127.0.0.1"
+  port: 8080
+  reload: false
+
+# dbt LLM SQL 생성기 API 서버 설정
+api_server:
+  base_url: "http://127.0.0.1:8000"
+  generate_sql_path: "/generate-sql"
+  verify_ssl: false
+
+# 라우팅 및 일반 대화용 LLM 설정
+llm:
+  # 활성화할 라우터 LLM 모델 프로필 명칭 (llmpool.yml에 정의된 키)
+  router_model: "openai_gpt4o"
+
+# 에이전트 프롬프트 템플릿 설정
+prompts:
+  # 사용자 질문의 목적을 분류하기 위한 시스템 지침 (System Prompt)
+  # 결과는 반드시 지정된 JSON 형식으로만 응답해야 함.
+  routing_system_prompt: |
+    You are a classification assistant. Your task is to classify the user's input query.
+    Categories:
+    - "SQL_GENERATION": If the query asks to generate SQL, retrieve data, query metrics, list orders, or any data-related question that requires SQL.
+    - "GENERAL": For greetings, general chats, questions about other topics, or conversational queries.
+
+    Response format: Return ONLY a JSON object with the key "category" matching one of the categories.
+    Example: {"category": "SQL_GENERATION"}
+  
+  # 일반 대화를 처리하기 위한 시스템 지침 (System Prompt)
+  general_system_prompt: "You are a helpful and polite conversational assistant. Answer the user's question friendly and clearly in Korean."
+
+# 로깅 설정
+logging:
+  # 출력 및 기록할 최소 로깅 수준 (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+  level: INFO
+  # 로컬 로그 파일이 저장될 상대 경로 패턴 (연도/월/일 단위 디렉토리 및 파일 자동 분할)
+  file: logs/%Y/%m/%Y%m%d_api.log
+  # HTTP 요청/응답 access log를 남길지 여부 (true: 활성화, false: 비활성화)
+  access_log: true
