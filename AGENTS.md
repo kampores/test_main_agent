@@ -26,6 +26,12 @@
 # 설계자 이메일: name@example_corp.com, name@example_personnel.com
 ```
 
+## Logging Rules
+
+- All log records must be output as a single line (Single Line) to facilitate automated log parsing and ingestion (e.g., Logstash, Fluentd, CloudWatch).
+- Any newline characters (`\n`, `\r`) contained in the log message or serialized data (e.g., SQL queries, LLM responses, exceptions) must be escaped or replaced (e.g., with spaces) to ensure the log remains flat on a single line.
+- For debugging or error tracing, ensure that the correlation info (e.g., request parameters or natural language questions) and the results (e.g., generated SQL or warning lists) are logged in the same single line context.
+
 ## README and Documentation Rules
 
 - Avoid trivial, tautological explanations in README documents or CLI options (e.g., "A is A").
